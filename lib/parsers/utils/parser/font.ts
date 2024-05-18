@@ -382,10 +382,7 @@ export function defineFont(tag: FontTag, ns: string): any {
 
 	let whiteSpaceWidth = 0;
 	i = 0;
-	let minx = 99999999;
-	let maxx = -99999999;
-	let miny = 99999999;
-	let maxy = -99999999;
+
 	while ((code = codes[i++]) !== undefined) {
 		const glyphPath: GraphicsPath = new GraphicsPath();
 		const idx = glyphIndex[code];
@@ -435,18 +432,6 @@ export function defineFont(tag: FontTag, ns: string): any {
 				var dx = nx - x;
 				var dy = ny - y;
 				myFlags += '\x01';
-				if (minx > nx) {
-					minx = nx;
-				}
-				if (maxx < nx) {
-					maxx = nx;
-				}
-				if (miny > ny) {
-					miny = ny;
-				}
-				if (maxy < ny) {
-					maxy = ny;
-				}
 				glyphPath.moveTo(nx, -1 * ny + offsetY);
 				x = nx;
 				y = ny;
@@ -458,18 +443,6 @@ export function defineFont(tag: FontTag, ns: string): any {
 				myFlags += '\x01';
 				x = nx;
 				y = ny;
-				if (minx > nx) {
-					minx = nx;
-				}
-				if (maxx < nx) {
-					maxx = nx;
-				}
-				if (miny > ny) {
-					miny = ny;
-				}
-				if (maxy < ny) {
-					maxy = ny;
-				}
 				glyphPath.lineTo(nx, -1 * ny + offsetY);
 			} else if (command === 3) {
 				nx = data[dataIndex++];
@@ -490,18 +463,6 @@ export function defineFont(tag: FontTag, ns: string): any {
 				myFlags += '\x01';
 				x = nx;
 				y = ny;
-				if (minx > nx) {
-					minx = nx;
-				}
-				if (maxx < nx) {
-					maxx = nx;
-				}
-				if (miny > ny) {
-					miny = ny;
-				}
-				if (maxy < ny) {
-					maxy = ny;
-				}
 				glyphPath.curveTo(cx, -1 * cy + offsetY, nx, -1 * ny + offsetY);
 			}
 			endPoint++;
