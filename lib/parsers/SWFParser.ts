@@ -698,7 +698,7 @@ export class SWFParser extends ParserBase {
 				this._processDecompressedData(data);
 
 				// may be finished
-				this._decompressor.onData = this._processDecompressedData.bind(this);
+				this._decompressor && (this._decompressor.onData = this._processDecompressedData.bind(this));
 			};
 
 			this._decompressor.onError = (error: any) => {
