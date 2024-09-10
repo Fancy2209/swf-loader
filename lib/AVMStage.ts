@@ -87,6 +87,7 @@ export class AVMStage extends EventDispatcher implements IAVMStage {
 	private _fpsTextField: HTMLDivElement;
 	private _currentFps: number;
 	private _projection: PerspectiveProjection;
+	private _stage3Ds:Array<Stage>
 	private _rendererStage: Stage;
 	private _displayState: StageDisplayState;
 
@@ -168,9 +169,9 @@ export class AVMStage extends EventDispatcher implements IAVMStage {
 		this._gameConfig = gameConfig;
 
 		// init awayengine
-		this.initAwayEninge();
+		this.initAwayEngine();
 		this._renderer.view.backgroundColor = 0xffffff;
-		//this._stage3Ds[this._stage3Ds.length]=new AwayStage(null, );
+		this._stage3Ds = []
 		AudioManager.setVolume(1);
 
 		// resize event listens on window
@@ -263,7 +264,7 @@ export class AVMStage extends EventDispatcher implements IAVMStage {
 		}
 	}
 
-	private initAwayEninge() {
+	private initAwayEngine() {
 
 		//create the projection
 		this._projection = new PerspectiveProjection();
@@ -643,6 +644,10 @@ export class AVMStage extends EventDispatcher implements IAVMStage {
 	public unPause() {
 		AudioManager.setVolume(this._volume);
 		this._isPaused = false;
+	}
+
+	public get stage3Ds():Array<Stage> { 
+		return this._stage3Ds
 	}
 
 	public get isPaused(): boolean {
