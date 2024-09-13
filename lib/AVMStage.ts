@@ -24,7 +24,7 @@ import {
 	ISceneGraphFactory,
 } from '@awayjs/scene';
 
-import { Stage, BitmapImage2D, Image2DParser, TouchPoint } from '@awayjs/stage';
+import { Stage, BitmapImage2D, Image2DParser, TouchPoint, StageManager } from '@awayjs/stage';
 import { BasicPartition, ContainerNode, IPartitionContainer, PickGroup, RaycastPicker, View } from '@awayjs/view';
 import { DefaultRenderer, RenderGroup } from '@awayjs/renderer';
 
@@ -87,7 +87,7 @@ export class AVMStage extends EventDispatcher implements IAVMStage {
 	private _fpsTextField: HTMLDivElement;
 	private _currentFps: number;
 	private _projection: PerspectiveProjection;
-	private _stage3Ds:Array<Stage>
+	private _stage3Ds: Stage[];
 	private _rendererStage: Stage;
 	private _displayState: StageDisplayState;
 
@@ -170,8 +170,11 @@ export class AVMStage extends EventDispatcher implements IAVMStage {
 
 		// init awayengine
 		this.initAwayEngine();
+		this._stage3Ds = Array<Stage>(StageManager.getInstance().numSlotsFree);
+		for(var i:number=0; i < this._stage3Ds.length; i++) {
+			this._stage3Ds[i] = StageManager.getInstance().getFreeStage()
+		}
 		this._renderer.view.backgroundColor = 0xffffff;
-		this._stage3Ds = []
 		AudioManager.setVolume(1);
 
 		// resize event listens on window
@@ -646,8 +649,8 @@ export class AVMStage extends EventDispatcher implements IAVMStage {
 		this._isPaused = false;
 	}
 
-	public get stage3Ds():Array<Stage> { 
-		return this._stage3Ds
+	public get stage3Ds(): Stage[] {
+		return this._stage3Ds;
 	}
 
 	public get isPaused(): boolean {
