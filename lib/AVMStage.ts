@@ -24,7 +24,7 @@ import {
 	ISceneGraphFactory,
 } from '@awayjs/scene';
 
-import { Stage, BitmapImage2D, Image2DParser, TouchPoint, StageManager } from '@awayjs/stage';
+import { Stage, BitmapImage2D, Image2DParser, TouchPoint, StageManager, ContextGLProfile, ContextMode } from '@awayjs/stage';
 import { BasicPartition, ContainerNode, IPartitionContainer, PickGroup, RaycastPicker, View } from '@awayjs/view';
 import { DefaultRenderer, RenderGroup } from '@awayjs/renderer';
 
@@ -97,6 +97,10 @@ export class AVMStage extends EventDispatcher implements IAVMStage {
 	private _y: any;
 	private _w: any;
 	private _h: any;
+
+	private _bgRed: number = 0;
+	private _bgGreen: number = 0;
+	private _bgBlue: number = 0;
 
 	private _volume: number = 1;
 	private _isPaused: boolean;
@@ -172,9 +176,11 @@ export class AVMStage extends EventDispatcher implements IAVMStage {
 		this.initAwayEngine();
 		this._stage3Ds = Array<Stage>(StageManager.getInstance().numSlotsFree);
 		for(var i:number=0; i < this._stage3Ds.length; i++) {
-			this._stage3Ds[i] = StageManager.getInstance().getFreeStage()
+			this._stage3Ds[i] = StageManager.getInstance().getFreeStage(false, ContextGLProfile.BASELINE,
+				ContextMode.AUTO, true)
+			this._stage3Ds[i].clear(0,0,0,0)
 		}
-		this._renderer.view.backgroundColor = 0xffffff;
+		this._renderer.view.backgroundAlpha = 0;
 		AudioManager.setVolume(1);
 
 		// resize event listens on window
@@ -278,7 +284,7 @@ export class AVMStage extends EventDispatcher implements IAVMStage {
 		this._projection.fieldOfView = Math.atan(window.innerHeight / 1000 / 2) * 360 / Math.PI;
 
 		//create the partition
-		this._view = new View(this._projection);
+		this._view = new View(this._projection, null, false, ContextGLProfile.BASELINE, ContextMode.AUTO, true);
 		this._root = new DisplayObjectContainer();
 		this._root.partitionClass = BasicPartition;
 		this._rootNode = this._root.getAbstraction<ContainerNode>(this._view);
@@ -294,6 +300,7 @@ export class AVMStage extends EventDispatcher implements IAVMStage {
 		this._renderer = this._partition.getAbstraction<DefaultRenderer>(RenderGroup.getInstance(DefaultRenderer));
 		this._rendererStage = this._view.stage;
 		this._rendererStage.container.style.visibility = 'hidden';
+		this._rendererStage.container.style.zIndex = '7';
 		this._rendererStage.antiAlias = 0;
 		this._renderer.renderableSorter = null;//new RenderableSort2D();
 
@@ -531,6 +538,9 @@ export class AVMStage extends EventDispatcher implements IAVMStage {
 		// real canvas size can be greater or less render dimension
 		let targetWidth = w;
 		let targetHeight = h;
+		this.stage3Ds[0].width = w;
+		this.stage3Ds[0].height = h;
+		this.stage3Ds[0].clear(this._bgRed, this._bgGreen, this._bgBlue)
 
 		// todo: correctly implement all StageScaleModes;
 		switch (this._scaleMode) {
@@ -743,11 +753,17 @@ export class AVMStage extends EventDispatcher implements IAVMStage {
 	}
 
 	public get color(): number {
-		return this._renderer.view.backgroundColor;
+		return this.stage3Ds[0].color;
 	}
 
 	public set color(value: number) {
-		this._renderer.view.backgroundColor = value;
+		this.stage3Ds[0].color = value;
+
+		// Color setter doesn't do anything, so fix color ourselves
+		this._bgRed = ((value >> 16) & 0xff) / 0xff;
+		this._bgGreen = ((value >> 8) & 0xff) / 0xff;
+		this._bgBlue = (value & 0xff) / 0xff;
+		this.stage3Ds[0].clear(this._bgRed, this._bgGreen, this._bgBlue)
 	}
 
 	public get frameRate(): number {
