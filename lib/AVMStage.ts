@@ -177,7 +177,7 @@ export class AVMStage extends EventDispatcher implements IAVMStage {
 		this._stage3Ds = Array<Stage>(StageManager.getInstance().numSlotsFree);
 		for(var i:number=0; i < this._stage3Ds.length; i++) {
 			this._stage3Ds[i] = StageManager.getInstance().getFreeStage(false, ContextGLProfile.BASELINE,
-				ContextMode.AUTO, true)
+				ContextMode.AUTO, !(i==0))
 			this._stage3Ds[i].clear(0,0,0,0)
 		}
 		this._renderer.view.backgroundAlpha = 0;
