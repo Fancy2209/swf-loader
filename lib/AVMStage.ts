@@ -24,7 +24,7 @@ import {
 	ISceneGraphFactory,
 } from '@awayjs/scene';
 
-import { Stage, BitmapImage2D, Image2DParser, TouchPoint, StageQuality, ContextGLProfile, ContextMode } from '@awayjs/stage';
+import { Stage, BitmapImage2D, Image2DParser, TouchPoint, StageQuality, ContextGLProfile, ContextMode, StageManager } from '@awayjs/stage';
 import { ContainerNode, IContainer, PickGroup, RaycastPicker, View } from '@awayjs/view';
 import { DefaultRenderer, RenderGroup } from '@awayjs/renderer';
 
